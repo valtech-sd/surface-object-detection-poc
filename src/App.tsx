@@ -63,7 +63,6 @@ function App() {
         ref={webcamRef}
         muted
         imageSmoothing
-        mirrored
         videoConstraints={videoConstraints}
       />
       <canvas
