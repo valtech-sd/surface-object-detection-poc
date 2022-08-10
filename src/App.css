@@ -1,8 +1,38 @@
-body {
+body, .root {
   margin: 0;
   padding: 0;
 }
 
-.app {
-  position: relative;
+.score {
+  position: absolute;
+  top: 10%;
+  left: 25%;
+  font-size: 75px;
+  color: white;
+}
+
+.score.right {
+  left: 75%;
+}
+
+.net {
+  width: 10px;
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px dashed white;
+  border-top: none;
+  border-bottom: none;
+}
+
+.pad {
+  position: absolute;
+  width: 10px;
+  height: 100px;
+  background-color: white;
+}
+
+.pad.user {
+  left: 0;
 }

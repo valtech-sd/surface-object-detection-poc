@@ -1,19 +1,18 @@
-import { useCallback, useEffect, useRef } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ObjectDetection, load } from "@tensorflow-models/coco-ssd";
-import * as tensorFlow from "@tensorflow/tfjs";
+import { ObjectDetection } from "@tensorflow-models/coco-ssd";
 import Webcam from "react-webcam";
 
-import { drawDetections } from "./utilities";
+import { render } from "./utils/canvas";
+import { Ball, User, ModelDetectionClasses } from "./types";
+import { loadCocoSSDModel } from "./utils/cocoSSD";
+import { isWebcamReady } from "./utils/webcam";
+import { update } from "./utils/game";
 
 import "./App.css";
 
-const isWebcamReady = (
-  webcamInstance: Webcam | null
-): webcamInstance is Webcam =>
-  webcamInstance !== null &&
-  webcamInstance.video !== null &&
-  webcamInstance.video.readyState === 4;
+const FLIPPED_VIDEO = false;
 
 const videoConstraints = {
   width: window.innerWidth,
@@ -25,45 +24,96 @@ function App() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const detect = useCallback(async (model: ObjectDetection) => {
-    // Check data is available
-    if (isWebcamReady(webcamRef.current) && canvasRef.current) {
+  const [cocoModel, setCocoModel] = useState<ObjectDetection>();
+  const [userScore, setUserScore] = useState(0);
+  const [computerScore, setComputerScore] = useState(0);
+
+  const user = useRef<User>({
+    x: 0,
+    y: window.innerHeight / 2 - 50,
+    width: 10,
+    height: 100,
+    color: "white",
+  }).current;
+
+  const computer = useRef<User>({
+    x: window.innerWidth - 10,
+    y: window.innerHeight / 2 - 50,
+    width: 10,
+    height: 100,
+    color: "white",
+  }).current;
+
+  const ball = useRef<Ball>({
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+    radius: 10,
+    color: "white",
+    speed: 5,
+    velocityX: 5,
+    velocityY: 5,
+  }).current;
+
+  const canvasContext = canvasRef.current
+    ? canvasRef.current.getContext("2d")
+    : undefined;
+
+  const detect = useCallback(async () => {
+    if (isWebcamReady(webcamRef.current) && canvasContext && cocoModel) {
       const { video } = webcamRef.current;
 
       if (video) {
-        const { videoWidth, videoHeight } = video;
+        cocoModel.detect(video, undefined, 0.2).then((detections) => {
+          const detection = detections.find(
+            (detection) => detection.class === ModelDetectionClasses.CELL_PHONE
+          );
 
-        canvasRef.current.width = videoWidth;
-        canvasRef.current.height = videoHeight;
-
-        const detections = await model.detect(video, undefined, 0.8);
-
-        const canvasContext = canvasRef.current.getContext("2d");
-        drawDetections(detections, canvasContext);
+          if (detection) {
+            const [, y] = detection.bbox;
+            user.y = y - user.height / 2;
+          }
+        });
       }
     }
-  }, []);
-
-  const loadModel = useCallback(async () => {
-    const model = await load();
-    detect(model);
-
-    setInterval(() => {
-      detect(model);
-    }, 100);
-  }, [detect]);
+  }, [cocoModel, canvasContext]);
 
   useEffect(() => {
-    tensorFlow.ready().then(loadModel);
-  }, [loadModel]);
+    loadCocoSSDModel().then(setCocoModel);
+  }, []);
+
+  const game = useCallback(() => {
+    if (cocoModel) {
+      detect();
+    }
+
+    update(ball, user, computer, setUserScore, setComputerScore);
+    render(canvasContext, ball, user, computer);
+
+    // Make this function recursive (and infinite)
+    requestAnimationFrame(game);
+  }, [detect, cocoModel]);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      canvasRef.current.width = window.innerWidth;
+      canvasRef.current.height = window.innerHeight;
+
+      game();
+    }
+  }, [canvasRef.current]);
 
   return (
-    <div className="app">
+    <>
+      <h1 className="score">{userScore}</h1>
+      <h1 className="score right">{computerScore}</h1>
+      <span className="net"></span>
       <Webcam
         ref={webcamRef}
         muted
+        mirrored={FLIPPED_VIDEO}
         imageSmoothing
         videoConstraints={videoConstraints}
+        style={{ zIndex: 1 }}
       />
       <canvas
         ref={canvasRef}
@@ -71,11 +121,10 @@ function App() {
           position: "absolute",
           top: 0,
           left: 0,
-          right: 0,
-          bottom: 0,
+          zIndex: 2,
         }}
       />
-    </div>
+    </>
   );
 }
 
