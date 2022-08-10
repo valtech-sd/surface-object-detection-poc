@@ -1,15 +1,42 @@
+import { getFirestore } from "firebase/firestore";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import {
+  FirebaseAppProvider,
+  FirestoreProvider,
+  useFirebaseApp,
+} from "reactfire";
+import AppContent from "./App";
 import reportWebVitals from "./reportWebVitals";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB_n3_r5G1je5jQK1lSiuIyd4X09-GIiOk",
+  authDomain: "pong-board.firebaseapp.com",
+  projectId: "pong-board",
+  storageBucket: "pong-board.appspot.com",
+  messagingSenderId: "554737791241",
+  appId: "1:554737791241:web:8f636b5b30d105213ba3d8",
+};
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
+const App = () => {
+  const firestoreInstance = getFirestore(useFirebaseApp());
+
+  return (
+    <FirestoreProvider sdk={firestoreInstance}>
+      <AppContent />
+    </FirestoreProvider>
+  );
+};
+
 root.render(
   <React.StrictMode>
-    <App />
+    <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+      <App />
+    </FirebaseAppProvider>
   </React.StrictMode>
 );
 
