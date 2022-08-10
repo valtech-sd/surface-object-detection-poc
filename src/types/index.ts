@@ -16,4 +16,12 @@ export type Ball = {
   velocityY: number;
 };
 
+export type GameState = {
+  player1: "connected" | "not_connected";
+  player2: "connected" | "not_connected";
+  status: "idle" | "playing";
+  sound: "none" | "sound_player_1" | "sound_player_2";
+  winner: "none" | "player_1" | "player_2";
+};
+
 export { default as ModelDetectionClasses } from "./modelDetectionClasses";

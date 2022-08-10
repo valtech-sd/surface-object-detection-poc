@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ObjectDetection } from "@tensorflow-models/coco-ssd";
 import Webcam from "react-webcam";
+import { doc, setDoc } from "firebase/firestore";
+import { useFirestore } from "reactfire";
 
 import { render } from "./utils/canvas";
 import { Ball, User, ModelDetectionClasses } from "./types";
@@ -27,6 +29,29 @@ function App() {
   const [cocoModel, setCocoModel] = useState<ObjectDetection>();
   const [userScore, setUserScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
+
+  const gameRef = doc(useFirestore(), "game", "nintendo");
+
+  useEffect(() => {
+    setDoc(gameRef, {
+      player1: "not_connected",
+      player2: "not_connected",
+      status: "idle",
+      sound: "none",
+      winner: "none",
+    });
+  }, []);
+
+  /*
+  // subscribe to a document for realtime updates. just one line!
+  const { status, data } = useFirestoreDocData(gameRef);
+
+  useEffect(() => {
+    if (data) {
+      setDoc(gameRef, { player1: "Eric" }, { merge: true });
+    }
+  }, [data]);
+  */
 
   const user = useRef<User>({
     x: 0,
