@@ -5,6 +5,8 @@ import { useFirestore, useFirestoreDocData } from "reactfire";
 import useSound from "use-sound";
 
 import hitSound from "../sounds/hitSound.wav";
+import winSound from "../sounds/win.wav";
+
 import { GAME_ID } from "../utils/config";
 
 type PlayerPageProps = {
@@ -15,6 +17,7 @@ function PlayerPage({ user }: PlayerPageProps) {
   const gameRef = doc(useFirestore(), "game", GAME_ID);
   const { status, data } = useFirestoreDocData(gameRef);
   const [play] = useSound(hitSound);
+  const [playWin] = useSound(winSound);
 
   const isPlayer1 = useMemo(() => user === "player1", [user]);
 
@@ -46,6 +49,7 @@ function PlayerPage({ user }: PlayerPageProps) {
     }
 
     if (data?.winner === user) {
+      playWin();
       return "WINNER";
     }
 
