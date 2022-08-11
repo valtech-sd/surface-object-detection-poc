@@ -71,18 +71,26 @@ function App() {
       const { video } = webcamRef.current;
 
       if (video) {
-        cocoModel.detect(video, undefined, 0.2).then((detections) => {
-          const detection = detections.find(
-            (detection) => detection.class === ModelDetectionClasses.CELL_PHONE
-          );
+        // Going over net as p1
+        if (user.x < window.innerWidth / 2) {
+          cocoModel.detect(video, undefined, 0.2).then((detections) => {
+            const detection = detections.find(
+              (detection) =>
+                detection.class === ModelDetectionClasses.CELL_PHONE
+            );
 
-          if (detection) {
-            const [x, y, width, height] = detection.bbox;
+            if (detection) {
+              const [x, y, width, height] = detection.bbox;
 
-            user.x = x + (width - user.width) / 2;
-            user.y = y + (height - user.height) / 2;
-          }
-        });
+              user.x = x + (width - user.width) / 2;
+              user.y = y + (height - user.height) / 2;
+            }
+          });
+        } else {
+          // Reset user position
+          user.x = 0;
+          user.y = window.innerHeight / 2 - 50;
+        }
       }
     }
   }, [cocoModel]);
