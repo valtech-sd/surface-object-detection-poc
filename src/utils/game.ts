@@ -1,8 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
 import { Ball, User } from "../types";
-import { BALL_RADIUS, PADDLE_HEIGHT, PADDLE_WIDTH } from "./config";
-
-const COMPUTER_LEVEL = 0.1;
+import {
+  BALL_RADIUS,
+  COMPUTER_LEVEL,
+  PADDLE_HEIGHT,
+  PADDLE_WIDTH,
+} from "./config";
 
 export const collision = (ball: Ball, player: User, log = false) => {
   const p = {
@@ -33,7 +36,8 @@ export const update = (
   computer: User,
   setUserScore: Dispatch<SetStateAction<number>>,
   setComputerScore: Dispatch<SetStateAction<number>>,
-  gameStarted = false
+  playHitSound: (user: "player1" | "player2") => void,
+  gameStarted: boolean
 ) => {
   ball.x += ball.velocityX;
   ball.y += ball.velocityY;
@@ -51,6 +55,8 @@ export const update = (
   const player = ball.x < window.innerWidth / 2 ? user : computer;
 
   if (collision(ball, player)) {
+    playHitSound(player === user ? "player1" : "player2");
+
     let collidePoint = ball.y - (player.y + PADDLE_HEIGHT / 2);
     collidePoint = collidePoint / (PADDLE_HEIGHT / 2);
     const angleRad = collidePoint * (Math.PI / 4);

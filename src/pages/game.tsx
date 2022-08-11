@@ -61,6 +61,16 @@ function GamePage() {
 
   useEffect(() => resetGame(), []);
 
+  const playHitSound = useCallback((user: "player1" | "player2") => {
+    setDoc(
+      gameRef,
+      {
+        sound: user,
+      },
+      { merge: true }
+    );
+  }, []);
+
   const getScoreText = useCallback(
     (score: number) => {
       if (data?.status === "finished") {
@@ -71,6 +81,15 @@ function GamePage() {
     },
     [data?.status]
   );
+
+  useEffect(() => {
+    if (data?.sound !== "none") {
+      setTimeout(
+        () => setDoc(gameRef, { sound: "none" }, { merge: true }),
+        1000
+      );
+    }
+  }, [data?.sound]);
 
   useEffect(() => {
     if (data?.status === "finished") {
@@ -161,6 +180,7 @@ function GamePage() {
         computer,
         setUserScore,
         setComputerScore,
+        playHitSound,
         data?.status === "playing"
       );
       render(
