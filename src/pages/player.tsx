@@ -4,7 +4,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 import useSound from "use-sound";
 
-import hitSound from '../sounds/hitSound.wav';
+import hitSound from "../sounds/hitSound.wav";
 
 type PlayerPageProps = {
   user: "player1" | "player2";

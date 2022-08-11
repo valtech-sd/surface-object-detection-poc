@@ -37,12 +37,15 @@ export const update = (
   setUserScore: Dispatch<SetStateAction<number>>,
   setComputerScore: Dispatch<SetStateAction<number>>,
   playHitSound: (user: "player1" | "player2") => void,
-  gameStarted: boolean
+  gameStarted: boolean,
+  multiplayer: boolean
 ) => {
   ball.x += ball.velocityX;
   ball.y += ball.velocityY;
 
-  computer.y = ball.y - (computer.y + PADDLE_HEIGHT / 2) * COMPUTER_LEVEL;
+  if (!multiplayer) {
+    computer.y = ball.y - (computer.y + PADDLE_HEIGHT / 2) * COMPUTER_LEVEL;
+  }
 
   if (!gameStarted) {
     user.y = ball.y - (user.y + PADDLE_HEIGHT / 2) * COMPUTER_LEVEL;

@@ -8,20 +8,6 @@ body,
   overflow: hidden;
 }
 
-.score {
-  position: absolute;
-  left: 0;
-  top: 10%;
-  width: 50%;
-  text-align: center;
-  font-size: 75px;
-  color: white;
-}
-
-.score.right {
-  left: 50%;
-}
-
 .net {
   width: 10px;
   height: 100%;
@@ -87,17 +73,36 @@ h1.paddle-text {
   color: white;
 }
 
-.qr.container {
+.score {
+  text-align: center;
+  font-size: 150px;
+  color: white;
+  margin: 0;
+}
+
+.player-info {
   position: absolute;
-  top: 50%;
-  left: 25%;
-  transform: translateX(-50%);
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 50%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 
-.qr.text {
+.player-info.right {
+  left: 50%;
+}
+
+.qr-text {
   color: white;
-  font-size: x-large;
+  font-size: 50px;
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

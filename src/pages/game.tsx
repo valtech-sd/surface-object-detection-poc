@@ -29,7 +29,7 @@ const videoConstraints = {
   facingMode: "user",
 };
 
-const NGROK_URL = "https://f2d8-181-170-248-208.ngrok.io";
+const NGROK_URL = "https://8465-181-170-248-208.ngrok.io";
 
 function GamePage() {
   const webcamRef = useRef<Webcam>(null);
@@ -148,16 +148,21 @@ function GamePage() {
         }
 
         cocoModel.detect(video, undefined, 0.2).then((detections) => {
-          const detection = detections.find(
+          const phoneDetections = detections.filter(
             (detection) => detection.class === ModelDetectionClasses.CELL_PHONE
           );
 
-          if (detection) {
+          phoneDetections.forEach((detection) => {
             const [x, y, width, height] = detection.bbox;
 
-            user.x = x + (width - PADDLE_WIDTH) / 2;
-            user.y = y + (height - PADDLE_HEIGHT) / 2;
-          }
+            if (x < window.innerWidth / 2) {
+              user.x = x + (width - PADDLE_WIDTH) / 2;
+              user.y = y + (height - PADDLE_HEIGHT) / 2;
+            } else {
+              computer.x = x + (width - PADDLE_WIDTH) / 2;
+              computer.y = y + (height - PADDLE_HEIGHT) / 2;
+            }
+          });
         });
       }
     }
@@ -184,7 +189,8 @@ function GamePage() {
         setUserScore,
         setComputerScore,
         playHitSound,
-        data?.status === "playing"
+        data?.status === "playing",
+        data.player2 === "connected"
       );
       render(
         canvasRef.current.getContext("2d"),
@@ -216,14 +222,25 @@ function GamePage() {
 
   return (
     <>
-      <h1 className="score">{getScoreText(userScore)}</h1>
-      <h1 className="score right">{getScoreText(computerScore)}</h1>
-      {data && data.status === "idle" && (
-        <div className="qr container">
-          <p className="qr text">Scan to play!</p>
-          <QRCodeSVG includeMargin value={`${NGROK_URL}/player-1`} />
-        </div>
-      )}
+      <div className="player-info">
+        <h1 className="score">{getScoreText(userScore)}</h1>
+        {data && data.status === "idle" && (
+          <div className="qr-container">
+            <p className="qr-text">Scan to play!</p>
+            <QRCodeSVG includeMargin value={`${NGROK_URL}/player-1`} />
+          </div>
+        )}
+      </div>
+      <div className="player-info right">
+        <h1 className="score">{getScoreText(computerScore)}</h1>
+        {data && data.status === "idle" && (
+          <div className="qr-container">
+            <p className="qr-text">Scan to play!</p>
+            <QRCodeSVG includeMargin value={`${NGROK_URL}/player-2`} />
+          </div>
+        )}
+      </div>
+
       <span className="net"></span>
       <img
         src={Player1Paddle}
