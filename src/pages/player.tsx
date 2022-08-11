@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo } from "react";
-
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 import useSound from "use-sound";
@@ -29,10 +28,10 @@ function PlayerPage({ user }: PlayerPageProps) {
   }, [isPlayer1, data]);
 
   useEffect(() => {
-    if (data?.sound === "player1" && data.status === "playing") {
+    if (data?.sound === user && data.status === "playing") {
       play();
     }
-  }, [data]);
+  }, [data?.sound, data?.status]);
 
   const onStartGameClick = () => {
     if (data.status === "idle") {

@@ -14,9 +14,13 @@ import { update } from "../utils/game";
 
 import Player1Paddle from "../Player1Paddle.png";
 import Player2Paddle from "../Player2Paddle.png";
-
-const FLIPPED_VIDEO = false;
-const MAX_SCORE = 2;
+import {
+  BALL_SPEED,
+  FLIPPED_VIDEO,
+  MAX_SCORE,
+  PADDLE_HEIGHT,
+  PADDLE_WIDTH,
+} from "../utils/config";
 
 const videoConstraints = {
   width: window.innerWidth,
@@ -40,7 +44,8 @@ function GamePage() {
 
   const resetGame = useCallback(() => {
     user.x = 0;
-    computer.x = window.innerWidth - 10;
+    computer.x = window.innerWidth - PADDLE_WIDTH;
+    ball.speed = BALL_SPEED;
 
     setUserScore(0);
     setComputerScore(0);
@@ -56,6 +61,16 @@ function GamePage() {
 
   useEffect(() => resetGame(), []);
 
+  const playHitSound = useCallback((user: "player1" | "player2") => {
+    setDoc(
+      gameRef,
+      {
+        sound: user,
+      },
+      { merge: true }
+    );
+  }, []);
+
   const getScoreText = useCallback(
     (score: number) => {
       if (data?.status === "finished") {
@@ -66,6 +81,15 @@ function GamePage() {
     },
     [data?.status]
   );
+
+  useEffect(() => {
+    if (data?.sound !== "none") {
+      setTimeout(
+        () => setDoc(gameRef, { sound: "none" }, { merge: true }),
+        1000
+      );
+    }
+  }, [data?.sound]);
 
   useEffect(() => {
     if (data?.status === "finished") {
@@ -93,26 +117,18 @@ function GamePage() {
 
   const user = useRef<User>({
     x: 0,
-    y: window.innerHeight / 2 - 50,
-    width: 10,
-    height: 100,
-    color: "transparent",
+    y: window.innerHeight / 2 - PADDLE_HEIGHT / 2,
   }).current;
 
   const computer = useRef<User>({
-    x: window.innerWidth - 10,
-    y: window.innerHeight / 2 - 50,
-    width: 10,
-    height: 100,
-    color: "transparent",
+    x: window.innerWidth - PADDLE_WIDTH,
+    y: window.innerHeight / 2 - PADDLE_HEIGHT / 2,
   }).current;
 
   const ball = useRef<Ball>({
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
-    radius: 10,
-    color: "white",
-    speed: 5,
+    speed: BALL_SPEED,
     velocityX: 5,
     velocityY: 5,
   }).current;
@@ -124,7 +140,7 @@ function GamePage() {
       if (video) {
         // Player 1 going to other side of the board
         if (user.x > window.innerWidth / 2) {
-          user.x = window.innerWidth / 2 - user.width;
+          user.x = window.innerWidth / 2 - PADDLE_WIDTH;
           return;
         }
 
@@ -136,8 +152,8 @@ function GamePage() {
           if (detection) {
             const [x, y, width, height] = detection.bbox;
 
-            user.x = x + (width - user.width) / 2;
-            user.y = y + (height - user.height) / 2;
+            user.x = x + (width - PADDLE_WIDTH) / 2;
+            user.y = y + (height - PADDLE_HEIGHT) / 2;
           }
         });
       }
@@ -164,8 +180,8 @@ function GamePage() {
         computer,
         setUserScore,
         setComputerScore,
-        data?.status === "playing",
-        gameRef
+        playHitSound,
+        data?.status === "playing"
       );
       render(
         canvasRef.current.getContext("2d"),
