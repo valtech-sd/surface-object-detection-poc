@@ -4,7 +4,8 @@ import { useEffect, useMemo } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 import useSound from "use-sound";
-const HitSound = require("../hitSound.wav");
+
+import hitSound from '../sounds/hitSound.wav';
 
 type PlayerPageProps = {
   user: "player1" | "player2";
@@ -13,7 +14,7 @@ type PlayerPageProps = {
 function PlayerPage({ user }: PlayerPageProps) {
   const gameRef = doc(useFirestore(), "game", "nintendo");
   const { status, data } = useFirestoreDocData(gameRef);
-  const [play] = useSound(HitSound);
+  const [play] = useSound(hitSound);
 
   const isPlayer1 = useMemo(() => user === "player1", [user]);
 
