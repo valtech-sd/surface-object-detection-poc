@@ -9,6 +9,7 @@ import { Ball, User, ModelDetectionClasses } from "./types";
 import { loadCocoSSDModel } from "./utils/cocoSSD";
 import { isWebcamReady } from "./utils/webcam";
 import { update } from "./utils/game";
+import Paddle from "./table-tennis-racket.png";
 
 import "./App.css";
 
@@ -24,6 +25,7 @@ function App() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>();
+  const paddleRef = useRef<HTMLImageElement>(null);
 
   const [cocoModel, setCocoModel] = useState<ObjectDetection>();
   const [userScore, setUserScore] = useState(0);
@@ -94,7 +96,13 @@ function App() {
       }
 
       update(ball, user, computer, setUserScore, setComputerScore, gameStarted);
-      render(canvasRef.current.getContext("2d"), ball, user, computer);
+      render(
+        canvasRef.current.getContext("2d"),
+        ball,
+        user,
+        computer,
+        paddleRef
+      );
 
       requestRef.current = requestAnimationFrame(game);
     }
@@ -120,6 +128,7 @@ function App() {
       <h1 className="score">{userScore}</h1>
       <h1 className="score right">{computerScore}</h1>
       <span className="net"></span>
+      <img src={Paddle} alt="paddle" className="paddle" ref={paddleRef} />
       <Webcam
         ref={webcamRef}
         muted
