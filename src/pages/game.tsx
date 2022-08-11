@@ -18,22 +18,6 @@ import Player2Paddle from "../Player2Paddle.png";
 const FLIPPED_VIDEO = false;
 const MAX_SCORE = 2;
 
-const INITIAL_PLAYER1_STATE = {
-  x: 0,
-  y: window.innerHeight / 2 - 50,
-  width: 10,
-  height: 100,
-  color: "white",
-};
-
-const INITIAL_PLAYER2_STATE = {
-  x: window.innerWidth - 10,
-  y: window.innerHeight / 2 - 50,
-  width: 10,
-  height: 100,
-  color: "white",
-};
-
 const videoConstraints = {
   width: window.innerWidth,
   height: window.innerHeight,
@@ -55,11 +39,8 @@ function GamePage() {
   const { data } = useFirestoreDocData(gameRef);
 
   const resetGame = useCallback(() => {
-    user.x = INITIAL_PLAYER1_STATE.x;
-    user.y = INITIAL_PLAYER1_STATE.y;
-
-    computer.x = INITIAL_PLAYER2_STATE.x;
-    computer.y = INITIAL_PLAYER2_STATE.y;
+    user.x = 0;
+    computer.x = window.innerWidth - 10;
 
     setUserScore(0);
     setComputerScore(0);
@@ -75,7 +56,7 @@ function GamePage() {
 
   useEffect(() => resetGame(), []);
 
-  const scoreText = useCallback(
+  const getScoreText = useCallback(
     (score: number) => {
       if (data?.status === "finished") {
         return score === MAX_SCORE ? "WINNER" : "LOOSER";
@@ -110,9 +91,21 @@ function GamePage() {
     }
   }, [userScore, computerScore]);
 
-  const user = useRef<User>(INITIAL_PLAYER1_STATE).current;
+  const user = useRef<User>({
+    x: 0,
+    y: window.innerHeight / 2 - 50,
+    width: 10,
+    height: 100,
+    color: "white",
+  }).current;
 
-  const computer = useRef<User>(INITIAL_PLAYER2_STATE).current;
+  const computer = useRef<User>({
+    x: window.innerWidth - 10,
+    y: window.innerHeight / 2 - 50,
+    width: 10,
+    height: 100,
+    color: "white",
+  }).current;
 
   const ball = useRef<Ball>({
     x: window.innerWidth / 2,
@@ -203,8 +196,8 @@ function GamePage() {
 
   return (
     <>
-      <h1 className="score">{scoreText(userScore)}</h1>
-      <h1 className="score right">{scoreText(computerScore)}</h1>
+      <h1 className="score">{getScoreText(userScore)}</h1>
+      <h1 className="score right">{getScoreText(computerScore)}</h1>
       <span className="net"></span>
       <img
         src={Player1Paddle}
