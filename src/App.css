@@ -10,14 +10,16 @@ body,
 
 .score {
   position: absolute;
+  left: 0;
   top: 10%;
-  left: 25%;
+  width: 50%;
+  text-align: center;
   font-size: 75px;
   color: white;
 }
 
 .score.right {
-  left: 75%;
+  left: 50%;
 }
 
 .net {

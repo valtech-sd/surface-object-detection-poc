@@ -16,7 +16,23 @@ import Player1Paddle from "../Player1Paddle.png";
 import Player2Paddle from "../Player2Paddle.png";
 
 const FLIPPED_VIDEO = false;
-const MAX_SCORE = 1;
+const MAX_SCORE = 2;
+
+const INITIAL_PLAYER1_STATE = {
+  x: 0,
+  y: window.innerHeight / 2 - 50,
+  width: 10,
+  height: 100,
+  color: "white",
+};
+
+const INITIAL_PLAYER2_STATE = {
+  x: window.innerWidth - 10,
+  y: window.innerHeight / 2 - 50,
+  width: 10,
+  height: 100,
+  color: "white",
+};
 
 const videoConstraints = {
   width: window.innerWidth,
@@ -38,7 +54,16 @@ function GamePage() {
   const gameRef = doc(useFirestore(), "game", "nintendo");
   const { data } = useFirestoreDocData(gameRef);
 
-  useEffect(() => {
+  const resetGame = useCallback(() => {
+    user.x = INITIAL_PLAYER1_STATE.x;
+    user.y = INITIAL_PLAYER1_STATE.y;
+
+    computer.x = INITIAL_PLAYER2_STATE.x;
+    computer.y = INITIAL_PLAYER2_STATE.y;
+
+    setUserScore(0);
+    setComputerScore(0);
+
     setDoc(gameRef, {
       player1: "not_connected",
       player2: "not_connected",
@@ -47,6 +72,25 @@ function GamePage() {
       winner: "none",
     });
   }, []);
+
+  useEffect(() => resetGame(), []);
+
+  const scoreText = useCallback(
+    (score: number) => {
+      if (data?.status === "finished") {
+        return score === MAX_SCORE ? "WINNER" : "LOOSER";
+      }
+
+      return score;
+    },
+    [data?.status]
+  );
+
+  useEffect(() => {
+    if (data?.status === "finished") {
+      setTimeout(() => resetGame(), 6000);
+    }
+  }, [data?.status]);
 
   useEffect(() => {
     const player1Won = userScore === MAX_SCORE;
@@ -66,21 +110,9 @@ function GamePage() {
     }
   }, [userScore, computerScore]);
 
-  const user = useRef<User>({
-    x: 0,
-    y: window.innerHeight / 2 - 50,
-    width: 10,
-    height: 100,
-    color: "white",
-  }).current;
+  const user = useRef<User>(INITIAL_PLAYER1_STATE).current;
 
-  const computer = useRef<User>({
-    x: window.innerWidth - 10,
-    y: window.innerHeight / 2 - 50,
-    width: 10,
-    height: 100,
-    color: "white",
-  }).current;
+  const computer = useRef<User>(INITIAL_PLAYER2_STATE).current;
 
   const ball = useRef<Ball>({
     x: window.innerWidth / 2,
@@ -97,26 +129,24 @@ function GamePage() {
       const { video } = webcamRef.current;
 
       if (video) {
-        // Going over net as p1
-        if (user.x < window.innerWidth / 2) {
-          cocoModel.detect(video, undefined, 0.2).then((detections) => {
-            const detection = detections.find(
-              (detection) =>
-                detection.class === ModelDetectionClasses.CELL_PHONE
-            );
-
-            if (detection) {
-              const [x, y, width, height] = detection.bbox;
-
-              user.x = x + (width - user.width) / 2;
-              user.y = y + (height - user.height) / 2;
-            }
-          });
-        } else {
-          // Reset user position
-          user.x = 0;
-          user.y = window.innerHeight / 2 - 50;
+        // Player 1 going to other side of the board
+        if (user.x > window.innerWidth / 2) {
+          user.x = window.innerWidth / 2 - user.width;
+          return;
         }
+
+        cocoModel.detect(video, undefined, 0.2).then((detections) => {
+          const detection = detections.find(
+            (detection) => detection.class === ModelDetectionClasses.CELL_PHONE
+          );
+
+          if (detection) {
+            const [x, y, width, height] = detection.bbox;
+
+            user.x = x + (width - user.width) / 2;
+            user.y = y + (height - user.height) / 2;
+          }
+        });
       }
     }
   }, [cocoModel]);
@@ -173,18 +203,18 @@ function GamePage() {
 
   return (
     <>
-      <h1 className="score">{userScore}</h1>
-      <h1 className="score right">{computerScore}</h1>
+      <h1 className="score">{scoreText(userScore)}</h1>
+      <h1 className="score right">{scoreText(computerScore)}</h1>
       <span className="net"></span>
       <img
         src={Player1Paddle}
-        alt="paddle user"
+        alt="paddle"
         className="paddle user"
         ref={player1PaddleRef}
       />
       <img
         src={Player2Paddle}
-        alt="paddle com"
+        alt="paddle"
         className="paddle com"
         ref={player2PaddleRef}
       />
