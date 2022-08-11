@@ -5,13 +5,14 @@ import { useFirestore, useFirestoreDocData } from "reactfire";
 import useSound from "use-sound";
 
 import hitSound from "../sounds/hitSound.wav";
+import { GAME_ID } from "../utils/config";
 
 type PlayerPageProps = {
   user: "player1" | "player2";
 };
 
 function PlayerPage({ user }: PlayerPageProps) {
-  const gameRef = doc(useFirestore(), "game", "nintendo");
+  const gameRef = doc(useFirestore(), "game", GAME_ID);
   const { status, data } = useFirestoreDocData(gameRef);
   const [play] = useSound(hitSound);
 

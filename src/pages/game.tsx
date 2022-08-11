@@ -18,6 +18,7 @@ import Player2Paddle from "../Player2Paddle.png";
 import {
   BALL_SPEED,
   FLIPPED_VIDEO,
+  GAME_ID,
   MAX_SCORE,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
@@ -42,7 +43,7 @@ function GamePage() {
   const [userScore, setUserScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
 
-  const gameRef = doc(useFirestore(), "game", "nintendo");
+  const gameRef = doc(useFirestore(), "game", GAME_ID);
   const { data } = useFirestoreDocData(gameRef);
 
   const resetGame = useCallback(() => {
