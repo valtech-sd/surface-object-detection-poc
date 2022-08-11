@@ -23,10 +23,12 @@ const videoConstraints = {
 function App() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const requestRef = useRef<number>();
 
   const [cocoModel, setCocoModel] = useState<ObjectDetection>();
   const [userScore, setUserScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const user = useRef<User>({
     x: 0,
@@ -35,6 +37,12 @@ function App() {
     height: 100,
     color: "white",
   }).current;
+
+  useEffect(() => {
+    setTimeout(() => {
+      setGameStarted(true);
+    }, 5000);
+  }, []);
 
   const computer = useRef<User>({
     x: window.innerWidth - 10,
@@ -54,12 +62,8 @@ function App() {
     velocityY: 5,
   }).current;
 
-  const canvasContext = canvasRef.current
-    ? canvasRef.current.getContext("2d")
-    : undefined;
-
   const detect = useCallback(async () => {
-    if (isWebcamReady(webcamRef.current) && canvasContext && cocoModel) {
+    if (isWebcamReady(webcamRef.current) && cocoModel) {
       const { video } = webcamRef.current;
 
       if (video) {
@@ -70,18 +74,6 @@ function App() {
 
           if (detection) {
             const [x, y, width, height] = detection.bbox;
-            const text = 'Players';
-
-            const color = "blue";
-
-            canvasContext.strokeStyle = color;
-            canvasContext.font = "14px Arial";
-            canvasContext.fillStyle = color;
-
-            canvasContext.beginPath();
-            canvasContext.fillText(text, x, y);
-            canvasContext.rect(x, y, width, height);
-            canvasContext.stroke();
 
             user.x = x + (width - user.width) / 2;
             user.y = y + (height - user.height) / 2;
@@ -89,32 +81,39 @@ function App() {
         });
       }
     }
-  }, [cocoModel, canvasContext]);
+  }, [cocoModel]);
 
   useEffect(() => {
     loadCocoSSDModel().then(setCocoModel);
   }, []);
 
   const game = useCallback(() => {
-    if (cocoModel) {
-      detect();
+    if (canvasRef.current) {
+      if (cocoModel) {
+        detect();
+      }
+
+      update(ball, user, computer, setUserScore, setComputerScore, gameStarted);
+      render(canvasRef.current.getContext("2d"), ball, user, computer);
+
+      requestRef.current = requestAnimationFrame(game);
     }
-
-    update(ball, user, computer, setUserScore, setComputerScore);
-    render(canvasContext, ball, user, computer);
-
-    // Make this function recursive (and infinite)
-    requestAnimationFrame(game);
-  }, [detect, cocoModel]);
+  }, [cocoModel, gameStarted, canvasRef.current]);
 
   useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.width = window.innerWidth;
       canvasRef.current.height = window.innerHeight;
 
-      game();
+      requestRef.current = requestAnimationFrame(game);
     }
-  }, [canvasRef.current]);
+
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+    };
+  }, [canvasRef.current, game]);
 
   return (
     <>

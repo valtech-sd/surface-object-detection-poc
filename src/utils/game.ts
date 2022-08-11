@@ -31,12 +31,17 @@ export const update = (
   user: User,
   computer: User,
   setUserScore: Dispatch<SetStateAction<number>>,
-  setComputerScore: Dispatch<SetStateAction<number>>
+  setComputerScore: Dispatch<SetStateAction<number>>,
+  gameStarted = false
 ) => {
   ball.x += ball.velocityX;
   ball.y += ball.velocityY;
 
   computer.y = ball.y - (computer.y + computer.height / 2) * COMPUTER_LEVEL;
+
+  if (!gameStarted) {
+    user.y = ball.y - (user.y + user.height / 2) * COMPUTER_LEVEL;
+  }
 
   if (ball.y + ball.radius > window.innerHeight || ball.y - ball.radius < 0) {
     ball.velocityY = -ball.velocityY;
