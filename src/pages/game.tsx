@@ -16,6 +16,7 @@ import Player1Paddle from "../Player1Paddle.png";
 import Player2Paddle from "../Player2Paddle.png";
 
 const FLIPPED_VIDEO = false;
+const MAX_SCORE = 2;
 
 const videoConstraints = {
   width: window.innerWidth,
@@ -37,7 +38,13 @@ function GamePage() {
   const gameRef = doc(useFirestore(), "game", "nintendo");
   const { data } = useFirestoreDocData(gameRef);
 
-  useEffect(() => {
+  const resetGame = useCallback(() => {
+    user.x = 0;
+    computer.x = window.innerWidth - 10;
+
+    setUserScore(0);
+    setComputerScore(0);
+
     setDoc(gameRef, {
       player1: "not_connected",
       player2: "not_connected",
@@ -46,6 +53,43 @@ function GamePage() {
       winner: "none",
     });
   }, []);
+
+  useEffect(() => resetGame(), []);
+
+  const getScoreText = useCallback(
+    (score: number) => {
+      if (data?.status === "finished") {
+        return score === MAX_SCORE ? "WINNER" : "LOOSER";
+      }
+
+      return score;
+    },
+    [data?.status]
+  );
+
+  useEffect(() => {
+    if (data?.status === "finished") {
+      setTimeout(() => resetGame(), 6000);
+    }
+  }, [data?.status]);
+
+  useEffect(() => {
+    const player1Won = userScore === MAX_SCORE;
+    const player2Won = computerScore === MAX_SCORE;
+
+    if (player1Won || player2Won) {
+      const winner = player1Won ? "player1" : "player2";
+
+      setDoc(
+        gameRef,
+        {
+          status: "finished",
+          winner,
+        },
+        { merge: true }
+      );
+    }
+  }, [userScore, computerScore]);
 
   const user = useRef<User>({
     x: 0,
@@ -78,26 +122,24 @@ function GamePage() {
       const { video } = webcamRef.current;
 
       if (video) {
-        // Going over net as p1
-        if (user.x < window.innerWidth / 2) {
-          cocoModel.detect(video, undefined, 0.2).then((detections) => {
-            const detection = detections.find(
-              (detection) =>
-                detection.class === ModelDetectionClasses.CELL_PHONE
-            );
-
-            if (detection) {
-              const [x, y, width, height] = detection.bbox;
-
-              user.x = x + (width - user.width) / 2;
-              user.y = y + (height - user.height) / 2;
-            }
-          });
-        } else {
-          // Reset user position
-          user.x = 0;
-          user.y = window.innerHeight / 2 - 50;
+        // Player 1 going to other side of the board
+        if (user.x > window.innerWidth / 2) {
+          user.x = window.innerWidth / 2 - user.width;
+          return;
         }
+
+        cocoModel.detect(video, undefined, 0.2).then((detections) => {
+          const detection = detections.find(
+            (detection) => detection.class === ModelDetectionClasses.CELL_PHONE
+          );
+
+          if (detection) {
+            const [x, y, width, height] = detection.bbox;
+
+            user.x = x + (width - user.width) / 2;
+            user.y = y + (height - user.height) / 2;
+          }
+        });
       }
     }
   }, [cocoModel]);
@@ -107,6 +149,10 @@ function GamePage() {
   }, []);
 
   const game = useCallback(() => {
+    if (data?.status === "finished") {
+      return;
+    }
+
     if (cocoModel && data?.status === "playing") {
       detect();
     }
@@ -151,18 +197,18 @@ function GamePage() {
 
   return (
     <>
-      <h1 className="score">{userScore}</h1>
-      <h1 className="score right">{computerScore}</h1>
+      <h1 className="score">{getScoreText(userScore)}</h1>
+      <h1 className="score right">{getScoreText(computerScore)}</h1>
       <span className="net"></span>
       <img
         src={Player1Paddle}
-        alt="paddle user"
+        alt="paddle"
         className="paddle user"
         ref={player1PaddleRef}
       />
       <img
         src={Player2Paddle}
-        alt="paddle com"
+        alt="paddle"
         className="paddle com"
         ref={player2PaddleRef}
       />

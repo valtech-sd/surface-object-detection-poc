@@ -9,7 +9,6 @@ function App() {
     <Routes>
       <Route path="/" element={<GamePage />} />
       <Route path="player-1" element={<PlayerPage user="player1" />} />
-      <Route path="player-2" element={<PlayerPage user="player2" />} />
     </Routes>
   );
 }
