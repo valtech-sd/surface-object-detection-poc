@@ -37,3 +37,23 @@ body, .root {
 .pad.user {
   left: 0;
 }
+
+.paddle-red {
+  width: 100vw;
+  height: 100vh;
+  background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paddle-blue {
+  width: 100vw;
+  height: 100vh;
+  background-color: blue;
+}
+
+button {
+  padding: 10px 24px;
+  border-radius: 10px;
+}

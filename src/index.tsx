@@ -6,6 +6,8 @@ import {
   FirestoreProvider,
   useFirebaseApp,
 } from "reactfire";
+import { BrowserRouter } from "react-router-dom";
+
 import AppContent from "./App";
 import reportWebVitals from "./reportWebVitals";
 
@@ -34,9 +36,11 @@ const App = () => {
 
 root.render(
   <React.StrictMode>
-    <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-      <App />
-    </FirebaseAppProvider>
+    <BrowserRouter>
+      <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+        <App />
+      </FirebaseAppProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
