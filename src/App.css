@@ -38,22 +38,29 @@ body, .root {
   left: 0;
 }
 
-.paddle-red {
+.paddle {
   width: 100vw;
   height: 100vh;
-  background-color: red;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.paddle-blue {
-  width: 100vw;
-  height: 100vh;
+.paddle.red {
+  background-color: red;
+}
+
+.paddle.blue {
   background-color: blue;
 }
 
-button {
+button.start-game {
   padding: 10px 24px;
   border-radius: 10px;
+}
+
+h1.paddle-text {
+  text-align: center;
+  font-size: 60px;
+  color: white;
 }

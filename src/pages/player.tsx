@@ -30,13 +30,30 @@ function PlayerPage({ user }: PlayerPageProps) {
     }
   };
 
+  const paddleText = useMemo(() => {
+    if (data?.winner === "none") {
+      return "";
+    }
+
+    if (data?.winner === user) {
+      return "WINNER";
+    }
+
+    return "LOOSER";
+  }, [data?.winner]);
+
   if (status === "loading") {
     return null;
   }
 
   return (
-    <div className={isPlayer1 ? "paddle-red" : "paddle-blue"}>
-      <button onClick={onStartGameClick}>START GAME</button>
+    <div className={isPlayer1 ? "paddle red" : "paddle blue"}>
+      {data.status === "idle" && (
+        <button className="start-game" onClick={onStartGameClick}>
+          START GAME
+        </button>
+      )}
+      {paddleText && <h1 className="paddle-text">{paddleText}</h1>}
     </div>
   );
 }
