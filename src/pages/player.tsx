@@ -16,8 +16,8 @@ type PlayerPageProps = {
 function PlayerPage({ user }: PlayerPageProps) {
   const gameRef = doc(useFirestore(), "game", GAME_ID);
   const { status, data } = useFirestoreDocData(gameRef);
-  const [play] = useSound(hitSound);
-  const [playWin] = useSound(winSound);
+  const [playHitSound] = useSound(hitSound);
+  const [playWinSound] = useSound(winSound);
 
   const isPlayer1 = useMemo(() => user === "player1", [user]);
 
@@ -32,10 +32,16 @@ function PlayerPage({ user }: PlayerPageProps) {
   }, [isPlayer1, data]);
 
   useEffect(() => {
-    if (data?.sound === user && data.status === "playing") {
-      play();
+    if (data?.sound === user) {
+      playHitSound();
     }
   }, [data?.sound, data?.status]);
+
+  useEffect(() => {
+    if (data?.winner === user) {
+      playWinSound();
+    }
+  }, [data?.winner]);
 
   const onStartGameClick = () => {
     if (data.status === "idle") {
@@ -49,7 +55,6 @@ function PlayerPage({ user }: PlayerPageProps) {
     }
 
     if (data?.winner === user) {
-      playWin();
       return "WINNER";
     }
 
