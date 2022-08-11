@@ -55,7 +55,9 @@ export const update = (
   const player = ball.x < window.innerWidth / 2 ? user : computer;
 
   if (collision(ball, player)) {
-    playHitSound(player === user ? "player1" : "player2");
+    if (gameStarted) {
+      playHitSound(player === user ? "player1" : "player2");
+    }
 
     let collidePoint = ball.y - (player.y + PADDLE_HEIGHT / 2);
     collidePoint = collidePoint / (PADDLE_HEIGHT / 2);
