@@ -4,13 +4,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ObjectDetection } from "@tensorflow-models/coco-ssd";
 import Webcam from "react-webcam";
 import { doc, setDoc } from "firebase/firestore";
-import { useFirestore } from "reactfire";
+import { useFirestore, useFirestoreDocData } from "reactfire";
 
 import { render } from "../utils/canvas";
 import { Ball, User, ModelDetectionClasses } from "../types";
 import { loadCocoSSDModel } from "../utils/cocoSSD";
 import { isWebcamReady } from "../utils/webcam";
 import { update } from "../utils/game";
+
+import Player1Paddle from "../Player1Paddle.png";
+import Player2Paddle from "../Player2Paddle.png";
 
 const FLIPPED_VIDEO = false;
 
@@ -23,12 +26,16 @@ const videoConstraints = {
 function GamePage() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const requestRef = useRef<number>();
+  const player1PaddleRef = useRef<HTMLImageElement>(null);
+  const player2PaddleRef = useRef<HTMLImageElement>(null);
 
   const [cocoModel, setCocoModel] = useState<ObjectDetection>();
   const [userScore, setUserScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
 
   const gameRef = doc(useFirestore(), "game", "nintendo");
+  const { data } = useFirestoreDocData(gameRef);
 
   useEffect(() => {
     setDoc(gameRef, {
@@ -39,28 +46,6 @@ function GamePage() {
       winner: "none",
     });
   }, []);
-
-  /*
-  // subscribe to a document for realtime updates. just one line!
-  const { status, data } = useFirestoreDocData(gameRef);
-
-  useEffect(() => {
-    if (data) {
-      setDoc(gameRef, { player1: "Eric" }, { merge: true });
-    }
-  }, [data]);
-  */
-
-  /*
-  // subscribe to a document for realtime updates. just one line!
-  const { status, data } = useFirestoreDocData(gameRef);
-
-  useEffect(() => {
-    if (data) {
-      setDoc(gameRef, { player1: "Eric" }, { merge: true });
-    }
-  }, [data]);
-  */
 
   const user = useRef<User>({
     x: 0,
@@ -88,59 +73,98 @@ function GamePage() {
     velocityY: 5,
   }).current;
 
-  const canvasContext = canvasRef.current
-    ? canvasRef.current.getContext("2d")
-    : undefined;
-
   const detect = useCallback(async () => {
-    if (isWebcamReady(webcamRef.current) && canvasContext && cocoModel) {
+    if (isWebcamReady(webcamRef.current) && cocoModel) {
       const { video } = webcamRef.current;
 
       if (video) {
-        cocoModel.detect(video, undefined, 0.2).then((detections) => {
-          const detection = detections.find(
-            (detection) => detection.class === ModelDetectionClasses.CELL_PHONE
-          );
+        // Going over net as p1
+        if (user.x < window.innerWidth / 2) {
+          cocoModel.detect(video, undefined, 0.2).then((detections) => {
+            const detection = detections.find(
+              (detection) =>
+                detection.class === ModelDetectionClasses.CELL_PHONE
+            );
 
-          if (detection) {
-            const [, y] = detection.bbox;
-            user.y = y - user.height / 2;
-          }
-        });
+            if (detection) {
+              const [x, y, width, height] = detection.bbox;
+
+              user.x = x + (width - user.width) / 2;
+              user.y = y + (height - user.height) / 2;
+            }
+          });
+        } else {
+          // Reset user position
+          user.x = 0;
+          user.y = window.innerHeight / 2 - 50;
+        }
       }
     }
-  }, [cocoModel, canvasContext]);
+  }, [cocoModel]);
 
   useEffect(() => {
     loadCocoSSDModel().then(setCocoModel);
   }, []);
 
   const game = useCallback(() => {
-    if (cocoModel) {
+    if (cocoModel && data?.status === "playing") {
       detect();
     }
 
-    update(ball, user, computer, setUserScore, setComputerScore);
-    render(canvasContext, ball, user, computer);
+    if (canvasRef.current) {
+      update(
+        ball,
+        user,
+        computer,
+        setUserScore,
+        setComputerScore,
+        data?.status === "playing"
+      );
+      render(
+        canvasRef.current.getContext("2d"),
+        ball,
+        user,
+        computer,
+        player1PaddleRef,
+        player2PaddleRef
+      );
 
-    // Make this function recursive (and infinite)
-    requestAnimationFrame(game);
-  }, [detect, cocoModel]);
+      requestRef.current = requestAnimationFrame(game);
+    }
+  }, [detect, cocoModel, data?.status]);
 
   useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.width = window.innerWidth;
       canvasRef.current.height = window.innerHeight;
 
-      game();
+      requestRef.current = requestAnimationFrame(game);
     }
-  }, [canvasRef.current]);
+
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+    };
+  }, [canvasRef.current, game]);
 
   return (
     <>
       <h1 className="score">{userScore}</h1>
       <h1 className="score right">{computerScore}</h1>
       <span className="net"></span>
+      <img
+        src={Player1Paddle}
+        alt="paddle user"
+        className="paddle user"
+        ref={player1PaddleRef}
+      />
+      <img
+        src={Player2Paddle}
+        alt="paddle com"
+        className="paddle com"
+        ref={player2PaddleRef}
+      />
       <Webcam
         ref={webcamRef}
         muted

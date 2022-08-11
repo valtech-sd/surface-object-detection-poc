@@ -1,4 +1,5 @@
 import { DetectedObject } from "@tensorflow-models/coco-ssd";
+import { RefObject } from "react";
 import { Ball, User, ModelDetectionClasses } from "../types";
 
 export const drawDetection = (
@@ -55,10 +56,20 @@ export const render = (
   canvasContext: CanvasRenderingContext2D | null | undefined,
   ball: Ball,
   user: User,
-  computer: User
+  computer: User,
+  player1PaddleRef: RefObject<HTMLImageElement>,
+  player2PaddleRef: RefObject<HTMLImageElement>
 ) => {
-  if (canvasContext) {
+  if (canvasContext && player1PaddleRef && player2PaddleRef) {
     clearCanvas(canvasContext);
+
+    player1PaddleRef.current!.style.visibility = "visible";
+    player1PaddleRef.current!.style.top = (user.y - 5).toString() + "px";
+    player1PaddleRef.current!.style.left = user.x.toString() + "px";
+
+    player2PaddleRef.current!.style.visibility = "visible";
+    player2PaddleRef.current!.style.top = (computer.y - 5).toString() + "px";
+    player2PaddleRef.current!.style.left = computer.x.toString() + "px";
 
     drawRect(
       canvasContext,

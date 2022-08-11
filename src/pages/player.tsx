@@ -47,7 +47,7 @@ function PlayerPage({ user }: PlayerPageProps) {
   }
 
   return (
-    <div className={isPlayer1 ? "paddle red" : "paddle blue"}>
+    <div className={isPlayer1 ? "paddle-page red" : "paddle-page blue"}>
       {data.status === "idle" && (
         <button className="start-game" onClick={onStartGameClick}>
           START GAME

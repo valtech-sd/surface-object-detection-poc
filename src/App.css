@@ -1,6 +1,10 @@
-body, .root {
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap");
+
+body,
+.root {
   margin: 0;
   padding: 0;
+  font-family: "Chakra Petch", sans-serif;
   overflow: hidden;
 }
 
@@ -38,7 +42,23 @@ body, .root {
   left: 0;
 }
 
-.paddle {
+img.paddle {
+  position: absolute;
+  height: 120px;
+  visibility: hidden;
+  z-index: 4;
+  width: 100px;
+}
+
+img.paddle.user {
+  transform: translateX(-40%);
+}
+
+img.paddle.com {
+  transform: translateX(-60%);
+}
+
+.paddle-page {
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -46,11 +66,11 @@ body, .root {
   justify-content: center;
 }
 
-.paddle.red {
+.paddle-page.red {
   background-color: red;
 }
 
-.paddle.blue {
+.paddle-page.blue {
   background-color: blue;
 }
 
