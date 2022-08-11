@@ -9,7 +9,8 @@ import { Ball, User, ModelDetectionClasses } from "./types";
 import { loadCocoSSDModel } from "./utils/cocoSSD";
 import { isWebcamReady } from "./utils/webcam";
 import { update } from "./utils/game";
-import Paddle from "./table-tennis-racket.png";
+import Player1Paddle from "./Player1Paddle.png";
+import Player2Paddle from "./Player2Paddle.png";
 
 import "./App.css";
 
@@ -25,7 +26,8 @@ function App() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>();
-  const paddleRef = useRef<HTMLImageElement>(null);
+  const player1PaddleRef = useRef<HTMLImageElement>(null);
+  const player2PaddleRef = useRef<HTMLImageElement>(null);
 
   const [cocoModel, setCocoModel] = useState<ObjectDetection>();
   const [userScore, setUserScore] = useState(0);
@@ -37,13 +39,13 @@ function App() {
     y: window.innerHeight / 2 - 50,
     width: 10,
     height: 100,
-    color: "white",
+    color: "transparent",
   }).current;
 
   useEffect(() => {
     setTimeout(() => {
       setGameStarted(true);
-    }, 5000);
+    }, 10000);
   }, []);
 
   const computer = useRef<User>({
@@ -51,7 +53,7 @@ function App() {
     y: window.innerHeight / 2 - 50,
     width: 10,
     height: 100,
-    color: "white",
+    color: "transparent",
   }).current;
 
   const ball = useRef<Ball>({
@@ -101,7 +103,8 @@ function App() {
         ball,
         user,
         computer,
-        paddleRef
+        player1PaddleRef,
+        player2PaddleRef
       );
 
       requestRef.current = requestAnimationFrame(game);
@@ -128,7 +131,18 @@ function App() {
       <h1 className="score">{userScore}</h1>
       <h1 className="score right">{computerScore}</h1>
       <span className="net"></span>
-      <img src={Paddle} alt="paddle" className="paddle" ref={paddleRef} />
+      <img
+        src={Player1Paddle}
+        alt="paddle user"
+        className="paddle user"
+        ref={player1PaddleRef}
+      />
+      <img
+        src={Player2Paddle}
+        alt="paddle com"
+        className="paddle com"
+        ref={player2PaddleRef}
+      />
       <Webcam
         ref={webcamRef}
         muted

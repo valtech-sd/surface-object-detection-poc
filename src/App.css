@@ -42,10 +42,20 @@ body,
   left: 0;
 }
 
-.paddle {
+.paddle.user {
   position: absolute;
   height: 120px;
   visibility: hidden;
-  transform: translateX(-50%);
+  transform: translateX(-40%);
   z-index: 4;
+  width: 100px;
+}
+
+.paddle.com {
+  position: absolute;
+  height: 120px;
+  visibility: hidden;
+  transform: translateX(-60%);
+  z-index: 4;
+  width: 100px;
 }

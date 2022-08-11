@@ -57,14 +57,19 @@ export const render = (
   ball: Ball,
   user: User,
   computer: User,
-  paddleRef: RefObject<HTMLImageElement>
+  player1PaddleRef: RefObject<HTMLImageElement>,
+  player2PaddleRef: RefObject<HTMLImageElement>
 ) => {
-  if (canvasContext && paddleRef) {
+  if (canvasContext && player1PaddleRef && player2PaddleRef) {
     clearCanvas(canvasContext);
 
-    paddleRef.current!.style.visibility = "visible";
-    paddleRef.current!.style.top = (user.y - 5).toString() + "px";
-    paddleRef.current!.style.left = (user.x + 2).toString() + "px";
+    player1PaddleRef.current!.style.visibility = "visible";
+    player1PaddleRef.current!.style.top = (user.y - 5).toString() + "px";
+    player1PaddleRef.current!.style.left = user.x.toString() + "px";
+
+    player2PaddleRef.current!.style.visibility = "visible";
+    player2PaddleRef.current!.style.top = (computer.y - 5).toString() + "px";
+    player2PaddleRef.current!.style.left = computer.x.toString() + "px";
 
     drawRect(
       canvasContext,
