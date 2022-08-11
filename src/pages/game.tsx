@@ -16,6 +16,7 @@ import Player1Paddle from "../Player1Paddle.png";
 import Player2Paddle from "../Player2Paddle.png";
 
 const FLIPPED_VIDEO = false;
+const MAX_SCORE = 1;
 
 const videoConstraints = {
   width: window.innerWidth,
@@ -46,6 +47,24 @@ function GamePage() {
       winner: "none",
     });
   }, []);
+
+  useEffect(() => {
+    const player1Won = userScore === MAX_SCORE;
+    const player2Won = computerScore === MAX_SCORE;
+
+    if (player1Won || player2Won) {
+      const winner = player1Won ? "player1" : "player2";
+
+      setDoc(
+        gameRef,
+        {
+          status: "finished",
+          winner,
+        },
+        { merge: true }
+      );
+    }
+  }, [userScore, computerScore]);
 
   const user = useRef<User>({
     x: 0,
@@ -107,6 +126,10 @@ function GamePage() {
   }, []);
 
   const game = useCallback(() => {
+    if (data?.status === "finished") {
+      return;
+    }
+
     if (cocoModel && data?.status === "playing") {
       detect();
     }
