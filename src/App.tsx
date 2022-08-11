@@ -69,8 +69,22 @@ function App() {
           );
 
           if (detection) {
-            const [, y] = detection.bbox;
-            user.y = y - user.height / 2;
+            const [x, y, width, height] = detection.bbox;
+            const text = 'Players';
+
+            const color = "blue";
+
+            canvasContext.strokeStyle = color;
+            canvasContext.font = "14px Arial";
+            canvasContext.fillStyle = color;
+
+            canvasContext.beginPath();
+            canvasContext.fillText(text, x, y);
+            canvasContext.rect(x, y, width, height);
+            canvasContext.stroke();
+
+            user.x = x + (width - user.width) / 2;
+            user.y = y + (height - user.height) / 2;
           }
         });
       }
