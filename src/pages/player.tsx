@@ -3,6 +3,8 @@ import { useEffect, useMemo } from "react";
 
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore, useFirestoreDocData } from "reactfire";
+import useSound from "use-sound";
+const HitSound = require("../hitSound.wav");
 
 type PlayerPageProps = {
   user: "player1" | "player2";
@@ -11,6 +13,7 @@ type PlayerPageProps = {
 function PlayerPage({ user }: PlayerPageProps) {
   const gameRef = doc(useFirestore(), "game", "nintendo");
   const { status, data } = useFirestoreDocData(gameRef);
+  const [play] = useSound(HitSound);
 
   const isPlayer1 = useMemo(() => user === "player1", [user]);
 
@@ -23,6 +26,12 @@ function PlayerPage({ user }: PlayerPageProps) {
       setDoc(gameRef, docInfo, { merge: true });
     }
   }, [isPlayer1, data]);
+
+  useEffect(() => {
+    if (data?.sound === "player1" && data.status === "playing") {
+      play();
+    }
+  }, [data]);
 
   const onStartGameClick = () => {
     if (data.status === "idle") {

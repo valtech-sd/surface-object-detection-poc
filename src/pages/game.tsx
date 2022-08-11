@@ -52,7 +52,7 @@ function GamePage() {
     y: window.innerHeight / 2 - 50,
     width: 10,
     height: 100,
-    color: "white",
+    color: "transparent",
   }).current;
 
   const computer = useRef<User>({
@@ -60,7 +60,7 @@ function GamePage() {
     y: window.innerHeight / 2 - 50,
     width: 10,
     height: 100,
-    color: "white",
+    color: "transparent",
   }).current;
 
   const ball = useRef<Ball>({
@@ -118,7 +118,8 @@ function GamePage() {
         computer,
         setUserScore,
         setComputerScore,
-        data?.status === "playing"
+        data?.status === "playing",
+        gameRef
       );
       render(
         canvasRef.current.getContext("2d"),

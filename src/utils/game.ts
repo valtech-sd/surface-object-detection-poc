@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Ball, User } from "../types";
+import { setDoc } from "firebase/firestore";
 
 const COMPUTER_LEVEL = 0.1;
 
@@ -32,7 +33,8 @@ export const update = (
   computer: User,
   setUserScore: Dispatch<SetStateAction<number>>,
   setComputerScore: Dispatch<SetStateAction<number>>,
-  gameStarted = false
+  gameStarted = false,
+  gameRef: any
 ) => {
   ball.x += ball.velocityX;
   ball.y += ball.velocityY;
@@ -50,6 +52,13 @@ export const update = (
   const player = ball.x < window.innerWidth / 2 ? user : computer;
 
   if (collision(ball, player)) {
+    if (player === user) {
+      setDoc(gameRef, { sound: "player1" }, { merge: true });
+      setTimeout(
+        () => setDoc(gameRef, { sound: "none" }, { merge: true }),
+        1000
+      );
+    }
     let collidePoint = ball.y - (player.y + player.height / 2);
     collidePoint = collidePoint / (player.height / 2);
     const angleRad = collidePoint * (Math.PI / 4);
