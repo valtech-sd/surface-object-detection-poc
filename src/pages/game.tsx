@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 import { ObjectDetection } from "@tensorflow-models/coco-ssd";
 import Webcam from "react-webcam";
@@ -27,6 +28,8 @@ const videoConstraints = {
   height: window.innerHeight,
   facingMode: "user",
 };
+
+const NGROK_URL = "https://f2d8-181-170-248-208.ngrok.io";
 
 function GamePage() {
   const webcamRef = useRef<Webcam>(null);
@@ -215,6 +218,12 @@ function GamePage() {
     <>
       <h1 className="score">{getScoreText(userScore)}</h1>
       <h1 className="score right">{getScoreText(computerScore)}</h1>
+      {data && data.status === "idle" && (
+        <div className="qr container">
+          <p className="qr text">Scan to play!</p>
+          <QRCodeSVG includeMargin value={`${NGROK_URL}/player-1`} />
+        </div>
+      )}
       <span className="net"></span>
       <img
         src={Player1Paddle}
