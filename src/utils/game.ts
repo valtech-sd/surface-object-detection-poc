@@ -1,21 +1,22 @@
 import { Dispatch, SetStateAction } from "react";
 import { Ball, User } from "../types";
+import { BALL_RADIUS, PADDLE_HEIGHT, PADDLE_WIDTH } from "./config";
 
 const COMPUTER_LEVEL = 0.1;
 
 export const collision = (ball: Ball, player: User, log = false) => {
   const p = {
     top: player.y,
-    bottom: player.y + player.height,
+    bottom: player.y + PADDLE_HEIGHT,
     left: player.x,
-    right: player.x + player.width,
+    right: player.x + PADDLE_WIDTH,
   };
 
   const b = {
-    top: ball.y - ball.radius,
-    bottom: ball.y + ball.radius,
-    left: ball.x - ball.radius,
-    right: ball.x + ball.radius,
+    top: ball.y - BALL_RADIUS,
+    bottom: ball.y + BALL_RADIUS,
+    left: ball.x - BALL_RADIUS,
+    right: ball.x + BALL_RADIUS,
   };
 
   return (
@@ -37,21 +38,21 @@ export const update = (
   ball.x += ball.velocityX;
   ball.y += ball.velocityY;
 
-  computer.y = ball.y - (computer.y + computer.height / 2) * COMPUTER_LEVEL;
+  computer.y = ball.y - (computer.y + PADDLE_HEIGHT / 2) * COMPUTER_LEVEL;
 
   if (!gameStarted) {
-    user.y = ball.y - (user.y + user.height / 2) * COMPUTER_LEVEL;
+    user.y = ball.y - (user.y + PADDLE_HEIGHT / 2) * COMPUTER_LEVEL;
   }
 
-  if (ball.y + ball.radius > window.innerHeight || ball.y - ball.radius < 0) {
+  if (ball.y + BALL_RADIUS > window.innerHeight || ball.y - BALL_RADIUS < 0) {
     ball.velocityY = -ball.velocityY;
   }
 
   const player = ball.x < window.innerWidth / 2 ? user : computer;
 
   if (collision(ball, player)) {
-    let collidePoint = ball.y - (player.y + player.height / 2);
-    collidePoint = collidePoint / (player.height / 2);
+    let collidePoint = ball.y - (player.y + PADDLE_HEIGHT / 2);
+    collidePoint = collidePoint / (PADDLE_HEIGHT / 2);
     const angleRad = collidePoint * (Math.PI / 4);
     let direction = ball.x < window.innerWidth / 2 ? 1 : -1;
 
@@ -60,10 +61,10 @@ export const update = (
     ball.speed += 0.1;
   }
 
-  if (ball.x - ball.radius < 0) {
+  if (ball.x - BALL_RADIUS < 0) {
     setComputerScore((prevScore: number) => prevScore + 1);
     resetBall(ball);
-  } else if (ball.x + ball.radius > window.innerWidth) {
+  } else if (ball.x + BALL_RADIUS > window.innerWidth) {
     setUserScore((prevScore) => prevScore + 1);
     resetBall(ball);
   }

@@ -1,6 +1,13 @@
 import { DetectedObject } from "@tensorflow-models/coco-ssd";
 import { RefObject } from "react";
 import { Ball, User, ModelDetectionClasses } from "../types";
+import {
+  BALL_COLOR,
+  BALL_RADIUS,
+  PADDLE_COLOR,
+  PADDLE_HEIGHT,
+  PADDLE_WIDTH,
+} from "./config";
 
 export const drawDetection = (
   detection: DetectedObject,
@@ -26,25 +33,20 @@ export const drawDetection = (
 export const drawRect = (
   canvasContext: CanvasRenderingContext2D,
   x: number,
-  y: number,
-  w: number,
-  h: number,
-  color: string
+  y: number
 ) => {
-  canvasContext!.fillStyle = color;
-  canvasContext!.fillRect(x, y, w, h);
+  canvasContext!.fillStyle = PADDLE_COLOR;
+  canvasContext!.fillRect(x, y, PADDLE_WIDTH, PADDLE_HEIGHT);
 };
 
 export const drawCircle = (
   canvasContext: CanvasRenderingContext2D,
   x: number,
-  y: number,
-  r: number,
-  color: string
+  y: number
 ) => {
-  canvasContext.fillStyle = color;
+  canvasContext.fillStyle = BALL_COLOR;
   canvasContext.beginPath();
-  canvasContext.arc(x, y, r, 0, Math.PI * 2, false);
+  canvasContext.arc(x, y, BALL_RADIUS, 0, Math.PI * 2, false);
   canvasContext.closePath();
   canvasContext.fill();
 };
@@ -71,22 +73,8 @@ export const render = (
     player2PaddleRef.current!.style.top = (computer.y - 5).toString() + "px";
     player2PaddleRef.current!.style.left = computer.x.toString() + "px";
 
-    drawRect(
-      canvasContext,
-      user.x,
-      user.y,
-      user.width,
-      user.height,
-      user.color
-    );
-    drawRect(
-      canvasContext,
-      window.innerWidth - 10,
-      computer.y,
-      computer.width,
-      computer.height,
-      computer.color
-    );
-    drawCircle(canvasContext, ball.x, ball.y, ball.radius, ball.color);
+    drawRect(canvasContext, user.x, user.y);
+    drawRect(canvasContext, window.innerWidth - PADDLE_WIDTH, computer.y);
+    drawCircle(canvasContext, ball.x, ball.y);
   }
 };
