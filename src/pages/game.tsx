@@ -36,7 +36,11 @@ const videoConstraints = {
 
 const NGROK_URL = "https://8465-181-170-248-208.ngrok.io";
 
-function GamePage() {
+interface GamePageProps {
+  webcam?: boolean;
+}
+
+function GamePage({ webcam = false }: GamePageProps) {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>();
@@ -260,7 +264,7 @@ function GamePage() {
         mirrored={FLIPPED_VIDEO}
         imageSmoothing
         videoConstraints={videoConstraints}
-        style={{ zIndex: 1 }}
+        style={{ opacity: Number(webcam) }}
       />
       <canvas
         ref={canvasRef}
