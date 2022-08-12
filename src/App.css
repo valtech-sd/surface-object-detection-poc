@@ -1,8 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap");
 
-* {
-  box-sizing: border-box;
-}
 
 body {
   height: 100vh;
@@ -10,6 +7,12 @@ body {
   margin: 0;
   font-family: "Chakra Petch", sans-serif;
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+video {
+  width: 100%;
+  height: 100%;
 }
 
 #root {
@@ -17,8 +20,11 @@ body {
   position: relative;
 }
 
-body {
-  padding: var(--padding-vertical) var(--padding-horizontal);
+canvas {
+  box-shadow: inset 0px 0px 0px 10px white;
+  left: 10%;
+  top: 10%;
+  width: 80%;
 }
 
 .net {
@@ -26,6 +32,8 @@ body {
   height: 100%;
   position: absolute;
   left: 50%;
+  top: 10%;
+  height: 80%;
   transform: translateX(-50%);
   border: 5px dashed white;
   border-top: none;
@@ -95,10 +103,10 @@ h1.paddle-text {
 
 .player-info {
   position: absolute;
-  left: 0;
-  top: 10%;
-  bottom: 10%;
-  width: 50%;
+  left: 10%;
+  top: 20%;
+  bottom: 20%;
+  width: 40%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

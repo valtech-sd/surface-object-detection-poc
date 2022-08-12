@@ -22,8 +22,6 @@ import {
   MAX_SCORE,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
-  BOARD_HEIGHT,
-  BOARD_WIDTH,
   BOARD_Y_MIDDLE,
   BOARD_X_START,
   BOARD_X_FINISH,
@@ -31,8 +29,8 @@ import {
 } from "../utils/config";
 
 const videoConstraints = {
-  width: BOARD_WIDTH,
-  height: BOARD_HEIGHT,
+  width: window.innerWidth,
+  height: window.innerHeight,
   facingMode: "user",
 };
 
@@ -55,6 +53,7 @@ function GamePage() {
   const resetGame = useCallback(() => {
     user.x = BOARD_X_START + PADDLE_WIDTH;
     computer.x = BOARD_X_FINISH - PADDLE_WIDTH;
+
     ball.speed = BALL_SPEED;
 
     setUserScore(0);
@@ -148,12 +147,6 @@ function GamePage() {
       const { video } = webcamRef.current;
 
       if (video) {
-        // Player 1 going to other side of the board
-        if (user.x > BOARD_X_MIDDLE) {
-          user.x = BOARD_X_MIDDLE - PADDLE_WIDTH;
-          return;
-        }
-
         cocoModel.detect(video, undefined, 0.2).then((detections) => {
           const phoneDetections = detections.filter(
             (detection) => detection.class === ModelDetectionClasses.CELL_PHONE
@@ -197,7 +190,7 @@ function GamePage() {
         setComputerScore,
         playHitSound,
         data?.status === "playing",
-        data.player2 === "connected"
+        data?.player2 === "connected"
       );
       render(
         canvasRef.current.getContext("2d"),
@@ -214,8 +207,8 @@ function GamePage() {
 
   useEffect(() => {
     if (canvasRef.current) {
-      canvasRef.current.width = BOARD_WIDTH;
-      canvasRef.current.height = BOARD_HEIGHT;
+      canvasRef.current.width = window.innerWidth * 0.8;
+      canvasRef.current.height = window.innerHeight * 0.8;
 
       requestRef.current = requestAnimationFrame(game);
     }
@@ -273,8 +266,6 @@ function GamePage() {
         ref={canvasRef}
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
           zIndex: 2,
         }}
       />

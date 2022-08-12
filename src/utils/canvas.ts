@@ -54,7 +54,7 @@ export const drawCircle = (
 };
 
 export const clearCanvas = (canvasContext: CanvasRenderingContext2D) =>
-  canvasContext.clearRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
+  canvasContext.clearRect(0, 0, BOARD_WIDTH + 20, BOARD_HEIGHT + 20);
 
 export const render = (
   canvasContext: CanvasRenderingContext2D | null | undefined,
