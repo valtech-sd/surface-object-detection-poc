@@ -1,11 +1,24 @@
 @import url("https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap");
 
-body,
-.root {
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
   margin: 0;
-  padding: 0;
   font-family: "Chakra Petch", sans-serif;
   overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  position: relative;
+}
+
+body {
+  padding: var(--padding-vertical) var(--padding-horizontal);
 }
 
 .net {

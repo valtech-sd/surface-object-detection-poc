@@ -1,8 +1,21 @@
 import { Route, Routes } from "react-router-dom";
 import GamePage from "./pages/game";
 
-import "./App.css";
 import PlayerPage from "./pages/player";
+
+import { HORIZONTAL_PADDING, VERTICAL_PADDING } from "./utils/config";
+
+import "./App.css";
+
+document.documentElement.style.setProperty(
+  "--padding-vertical",
+  `${VERTICAL_PADDING}px`
+);
+
+document.documentElement.style.setProperty(
+  "--padding-horizontal",
+  `${HORIZONTAL_PADDING}px`
+);
 
 function App() {
   return (
