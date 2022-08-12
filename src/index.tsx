@@ -12,12 +12,12 @@ import AppContent from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_n3_r5G1je5jQK1lSiuIyd4X09-GIiOk",
-  authDomain: "pong-board.firebaseapp.com",
-  projectId: "pong-board",
-  storageBucket: "pong-board.appspot.com",
-  messagingSenderId: "554737791241",
-  appId: "1:554737791241:web:8f636b5b30d105213ba3d8",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY as string,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN as string,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID as string,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET as string,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGE_SENDER_ID as string,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID as string,
 };
 
 const root = ReactDOM.createRoot(
