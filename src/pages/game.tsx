@@ -34,7 +34,7 @@ const videoConstraints = {
   facingMode: "user",
 };
 
-const NGROK_URL = "https://8465-181-170-248-208.ngrok.io";
+const NGROK_URL = "https://beea-181-170-248-208.ngrok.io";
 
 interface GamePageProps {
   webcam?: boolean;
@@ -159,7 +159,7 @@ function GamePage({ webcam = false }: GamePageProps) {
           phoneDetections.forEach((detection) => {
             const [x, y, width, height] = detection.bbox;
 
-            if (x < BOARD_X_MIDDLE) {
+            if (x < BOARD_X_MIDDLE || data?.player2 === "not_connected") {
               user.x = x + (width - PADDLE_WIDTH) / 2;
               user.y = y + (height - PADDLE_HEIGHT) / 2;
             } else {
@@ -170,7 +170,7 @@ function GamePage({ webcam = false }: GamePageProps) {
         });
       }
     }
-  }, [cocoModel]);
+  }, [cocoModel, data?.player2]);
 
   useEffect(() => {
     loadCocoSSDModel().then(setCocoModel);
