@@ -4,6 +4,8 @@ import { Ball, User, ModelDetectionClasses } from "../types";
 import {
   BALL_COLOR,
   BALL_RADIUS,
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
   PADDLE_COLOR,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
@@ -52,7 +54,7 @@ export const drawCircle = (
 };
 
 export const clearCanvas = (canvasContext: CanvasRenderingContext2D) =>
-  canvasContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  canvasContext.clearRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
 
 export const render = (
   canvasContext: CanvasRenderingContext2D | null | undefined,
@@ -74,7 +76,7 @@ export const render = (
     player2PaddleRef.current!.style.left = computer.x.toString() + "px";
 
     drawRect(canvasContext, user.x, user.y);
-    drawRect(canvasContext, window.innerWidth - PADDLE_WIDTH, computer.y);
+    drawRect(canvasContext, computer.x, computer.y);
     drawCircle(canvasContext, ball.x, ball.y);
   }
 };

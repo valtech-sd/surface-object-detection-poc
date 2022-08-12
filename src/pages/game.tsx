@@ -22,11 +22,17 @@ import {
   MAX_SCORE,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
+  BOARD_Y_MIDDLE,
+  BOARD_X_START,
+  BOARD_X_FINISH,
+  BOARD_X_MIDDLE,
 } from "../utils/config";
 
 const videoConstraints = {
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: BOARD_WIDTH,
+  height: BOARD_HEIGHT,
   facingMode: "user",
 };
 
@@ -47,8 +53,8 @@ function GamePage() {
   const { data } = useFirestoreDocData(gameRef);
 
   const resetGame = useCallback(() => {
-    user.x = 0;
-    computer.x = window.innerWidth - PADDLE_WIDTH;
+    user.x = BOARD_X_START + PADDLE_WIDTH;
+    computer.x = BOARD_X_FINISH - PADDLE_WIDTH;
     ball.speed = BALL_SPEED;
 
     setUserScore(0);
@@ -120,18 +126,18 @@ function GamePage() {
   }, [userScore, computerScore]);
 
   const user = useRef<User>({
-    x: 0,
-    y: window.innerHeight / 2 - PADDLE_HEIGHT / 2,
+    x: BOARD_X_START + PADDLE_WIDTH,
+    y: BOARD_Y_MIDDLE - PADDLE_HEIGHT / 2,
   }).current;
 
   const computer = useRef<User>({
-    x: window.innerWidth - PADDLE_WIDTH,
-    y: window.innerHeight / 2 - PADDLE_HEIGHT / 2,
+    x: BOARD_X_FINISH - PADDLE_WIDTH,
+    y: BOARD_Y_MIDDLE - PADDLE_HEIGHT / 2,
   }).current;
 
   const ball = useRef<Ball>({
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
+    x: BOARD_X_MIDDLE,
+    y: BOARD_Y_MIDDLE,
     speed: BALL_SPEED,
     velocityX: 5,
     velocityY: 5,
@@ -143,8 +149,8 @@ function GamePage() {
 
       if (video) {
         // Player 1 going to other side of the board
-        if (user.x > window.innerWidth / 2) {
-          user.x = window.innerWidth / 2 - PADDLE_WIDTH;
+        if (user.x > BOARD_X_MIDDLE) {
+          user.x = BOARD_X_MIDDLE - PADDLE_WIDTH;
           return;
         }
 
@@ -156,7 +162,7 @@ function GamePage() {
           phoneDetections.forEach((detection) => {
             const [x, y, width, height] = detection.bbox;
 
-            if (x < window.innerWidth / 2) {
+            if (x < BOARD_X_MIDDLE) {
               user.x = x + (width - PADDLE_WIDTH) / 2;
               user.y = y + (height - PADDLE_HEIGHT) / 2;
             } else {
@@ -208,8 +214,8 @@ function GamePage() {
 
   useEffect(() => {
     if (canvasRef.current) {
-      canvasRef.current.width = window.innerWidth;
-      canvasRef.current.height = window.innerHeight;
+      canvasRef.current.width = BOARD_WIDTH;
+      canvasRef.current.height = BOARD_HEIGHT;
 
       requestRef.current = requestAnimationFrame(game);
     }
