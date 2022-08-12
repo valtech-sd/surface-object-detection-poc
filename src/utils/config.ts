@@ -7,4 +7,4 @@ export const BALL_RADIUS = 10;
 export const BALL_COLOR = "white";
 export const BALL_SPEED = 5;
 export const COMPUTER_LEVEL = 0.1;
-export const GAME_ID = "nintendo";
+export const GAME_ID = process.env.REACT_APP_GAME_ID as string;

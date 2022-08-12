@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+# Valtech's Future Studio Pong Game
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## How to run this project
 
-In the project directory, you can run:
+In order to be able to run this project you need to create a .env.local file in the project's root folder with the following structure:
 
-### `npm start`
+```
+REACT_APP_FIREBASE_API_KEY=
+REACT_APP_FIREBASE_AUTH_DOMAIN=
+REACT_APP_FIREBASE_PROJECT_ID=
+REACT_APP_FIREBASE_STORAGE_BUCKET=
+REACT_APP_FIREBASE_MESSAGE_SENDER_ID=
+REACT_APP_FIREBASE_APP_ID=
+REACT_APP_GAME_ID=
+```
 
-Runs the app in the development mode.\
+As you can see, the first six env vars are Firebase/Firestore related variables so you have to have a Firebase project already created. You will be able to get all the needed values from your project's settings page.
+
+The last env variable is just a string that represents the name of the board (it can be something like where is this board located, which brand is using it).
+
+Once you have this env file created, you only need to run:
+
+```
+npm start
+```
+
+This runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Also the page will reload if you make edits and you will also see any lint errors in the console.
 
-### `npm test`
+## Tools being used
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This is the list of tools we have used:
 
-### `npm run build`
+- Create React App: for scaffolding the react project
+- HTML Canvas: for drawing the ball and paddles into the screen
+- React Webcam: for showing a `<video>` html element that shows what the user's webcam is seeing
+- Tensorflow + CocoSSD: for detecting common objects off of the webcam's captured video. We are just taking into account cellphones but as you can see in CocoSSD's model classes, it comes with a lot of objects it can detect.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Pong logic
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+We have used [this video](https://www.youtube.com/watch?v=nl0KXCa5pJk) as a reference for building our basic game logic.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Once we have that in place we only had to detect where the cellphones were (based on what tensorflow detects) and use those coordinates to place the paddles where we want them to be.
