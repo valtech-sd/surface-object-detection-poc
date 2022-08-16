@@ -18,3 +18,8 @@ export const BOARD_Y_START = window.innerHeight * 0.1 + 10;
 export const BOARD_Y_MIDDLE = window.innerHeight / 2;
 export const BOARD_Y_FINISH = window.innerHeight * 0.9 - 10;
 export const BOARD_HEIGHT = BOARD_Y_FINISH - BOARD_Y_START;
+
+export const APP_URL =
+  process.env.NODE_ENV === "development"
+    ? (process.env.REACT_APP_NGROK_URL as string)
+    : window.location.origin;

@@ -26,6 +26,7 @@ import {
   BOARD_X_START,
   BOARD_X_FINISH,
   BOARD_X_MIDDLE,
+  APP_URL,
 } from "../utils/config";
 
 const videoConstraints = {
@@ -33,8 +34,6 @@ const videoConstraints = {
   height: window.innerHeight,
   facingMode: "user",
 };
-
-const NGROK_URL = "https://beea-181-170-248-208.ngrok.io";
 
 interface GamePageProps {
   webcam?: boolean;
@@ -231,7 +230,7 @@ function GamePage({ webcam = false }: GamePageProps) {
         {data && data.status === "idle" && (
           <div className="qr-container">
             <p className="qr-text">Scan to play!</p>
-            <QRCodeSVG includeMargin value={`${NGROK_URL}/player-1`} />
+            <QRCodeSVG includeMargin value={`${APP_URL}/player-1`} />
           </div>
         )}
       </div>
@@ -240,7 +239,7 @@ function GamePage({ webcam = false }: GamePageProps) {
         {data && data.status === "idle" && (
           <div className="qr-container">
             <p className="qr-text">Scan to play!</p>
-            <QRCodeSVG includeMargin value={`${NGROK_URL}/player-2`} />
+            <QRCodeSVG includeMargin value={`${APP_URL}/player-2`} />
           </div>
         )}
       </div>
