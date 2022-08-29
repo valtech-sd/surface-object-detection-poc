@@ -10632,7 +10632,7 @@
         }
       },
       {
-        "name": "StatefulPartitionedCall/Postprocessor/Cast",
+        "name": "StatefulPartitionedCall/Postprocessor/Cast_1",
         "op": "Cast",
         "input": [
           "StatefulPartitionedCall/map/TensorArrayV2Stack_1/TensorListStack"
@@ -10672,7 +10672,7 @@
       {
         "name": "StatefulPartitionedCall/Postprocessor/unstack",
         "op": "Unpack",
-        "input": ["StatefulPartitionedCall/Postprocessor/Cast"],
+        "input": ["StatefulPartitionedCall/Postprocessor/Cast_1"],
         "attr": {
           "T": { "type": "DT_FLOAT" },
           "axis": { "i": "1" },
@@ -21043,7 +21043,7 @@
         ]
       },
       {
-        "name": "StatefulPartitionedCall/Postprocessor/BatchMultiClassNonMaxSuppression/MultiClassNonMaxSuppression/Cast",
+        "name": "StatefulPartitionedCall/Postprocessor/BatchMultiClassNonMaxSuppression/MultiClassNonMaxSuppression/Cast_1",
         "op": "Cast",
         "input": [
           "StatefulPartitionedCall/Postprocessor/BatchMultiClassNonMaxSuppression/MultiClassNonMaxSuppression/GreaterEqual"
@@ -21086,7 +21086,7 @@
         "name": "StatefulPartitionedCall/Postprocessor/BatchMultiClassNonMaxSuppression/MultiClassNonMaxSuppression/Sum",
         "op": "Sum",
         "input": [
-          "StatefulPartitionedCall/Postprocessor/BatchMultiClassNonMaxSuppression/MultiClassNonMaxSuppression/Cast",
+          "StatefulPartitionedCall/Postprocessor/BatchMultiClassNonMaxSuppression/MultiClassNonMaxSuppression/Cast_1",
           "StatefulPartitionedCall/Postprocessor/BatchMultiClassNonMaxSuppression/MultiClassNonMaxSuppression/Const_1"
         ],
         "attr": {
@@ -22753,7 +22753,7 @@
               }
             },
             {
-              "name": "map/while/Preprocessor/ResizeToRange/cond/resize/Cast",
+              "name": "map/while/Preprocessor/ResizeToRange/cond/resize/Cast_1",
               "op": "Cast",
               "input": [
                 "map/while/Preprocessor/ResizeToRange/cond/resize/unstack:output:1"
@@ -22793,7 +22793,7 @@
               "op": "RealDiv",
               "input": [
                 "__inference_map_while_Preprocessor_ResizeToRange_cond_true_12656_12293/map/while/Preprocessor/ResizeToRange/cond/resize/Cast:output:0",
-                "__inference_map_while_Preprocessor_ResizeToRange_cond_true_12656_12293/map/while/Preprocessor/ResizeToRange/cond/resize/Cast:y:0"
+                "__inference_map_while_Preprocessor_ResizeToRange_cond_true_12656_12293/map/while/Preprocessor/ResizeToRange/cond/resize/Cast_1:y:0"
               ],
               "attr": { "T": { "type": "DT_FLOAT" } }
             },
@@ -24451,7 +24451,7 @@
               }
             },
             {
-              "name": "map/while/Preprocessor/ResizeToRange/cond/resize/Cast",
+              "name": "map/while/Preprocessor/ResizeToRange/cond/resize/Cast_1",
               "op": "Cast",
               "input": [
                 "map/while/Preprocessor/ResizeToRange/cond/resize/unstack:output:1"
@@ -24491,7 +24491,7 @@
               "op": "RealDiv",
               "input": [
                 "__inference_map_while_Preprocessor_ResizeToRange_cond_false_12657_28319/map/while/Preprocessor/ResizeToRange/cond/resize/Cast:output:0",
-                "__inference_map_while_Preprocessor_ResizeToRange_cond_false_12657_28319/map/while/Preprocessor/ResizeToRange/cond/resize/Cast:y:0"
+                "__inference_map_while_Preprocessor_ResizeToRange_cond_false_12657_28319/map/while/Preprocessor/ResizeToRange/cond/resize/Cast_1:y:0"
               ],
               "attr": { "T": { "type": "DT_FLOAT" } }
             },
