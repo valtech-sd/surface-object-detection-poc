@@ -58,7 +58,7 @@ function PlayerPage({ user }: PlayerPageProps) {
       return "WINNER";
     }
 
-    return "LOOSER";
+    return "LOSER";
   }, [data?.winner]);
 
   if (status === "loading") {

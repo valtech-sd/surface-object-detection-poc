@@ -86,7 +86,7 @@ function GamePage({ webcam = false }: GamePageProps) {
   const getScoreText = useCallback(
     (score: number) => {
       if (data?.status === "finished") {
-        return score === MAX_SCORE ? "WINNER" : "LOOSER";
+        return score === MAX_SCORE ? "WINNER" : "LOSER";
       }
 
       return score;
